@@ -63,7 +63,7 @@ class TwitterPush
     left = Base64.encode64(g['device-id'].to_s[0,17]).strip
     right = (g['auth']).to_s.strip
     unless(left == right)
-      return  msg(true, "ERROR: DEVICE ID NOT AUTHENTICATED: " + left + "|" + right)
+      return  msg(true, "ERROR: DEVICE ID NOT AUTHENTICATED")
     end
 
     msg = "Unknown twitter email"
@@ -73,7 +73,7 @@ class TwitterPush
       msg = "DM from " +  p['X-Twittersendername'] + ": " + guess_at_msg[0].to_s.strip
     end
     alert = {"action-loc-key" => "REPLY", :body => msg}
-    message = JSON.generate({:aps => {:alert => alert, :sound => "chimes"}})
+    message = JSON.generate({:aps => {:alert => alert, :sound => "chimes"}, :msgtype => p['X-Twitteremailtype'], :from => p['X-Twittersenderscreenname']})
 
     key = [g['device-id'].to_s.delete(' ')].pack('H*')
     notification_packet = [0, 0, 32, key, 0, message.size, message].pack("ccca*cca*")
