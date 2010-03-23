@@ -78,8 +78,7 @@ class TwitterPush
     key = [g['device-id'].to_s.delete(' ')].pack('H*')
     notification_packet = [0, 0, 32, key, 0, message.size, message].pack("ccca*cca*")
 
-    clean_up_ssl if (@ssl and  @ssl.eof?) or (@sock and @sock.eof?)
-    build_up_ssl if @ssl.nil? or @socket.nil? 
+    build_up_ssl if @ssl.nil? or @sock.nil? 
 
     begin
       @ssl.write(notification_packet)
@@ -88,6 +87,9 @@ class TwitterPush
       build_up_ssl 
       @ssl.write(notification_packet)
     end
+
+    clean_up_ssl #if (@ssl and  @ssl.eof?) or (@sock and @sock.eof?)
+
     msg false, 'OK'
   end
   
